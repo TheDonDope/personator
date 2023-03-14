@@ -1,0 +1,327 @@
+<div class="grid-container">
+  <h1 class="mat-h1">Dashboard</h1>
+
+  <mat-card
+    *ngFor="let personalisierungDTO of personalisierungDTOList"
+    class="dashboard-card"
+  >
+    <mat-card-header>
+      <div mat-card-avatar class="contact-avatar">
+        <mat-icon aria-hidden="false" fontIcon="contact_mail"></mat-icon>
+      </div>
+      <mat-card-title
+        >Absender {{ personalisierungDTO.absenderVorname }}
+        {{ personalisierungDTO.absenderZusatzwort }}
+        {{ personalisierungDTO.absenderNachname }}</mat-card-title
+      >
+      <mat-card-subtitle
+        >Dienststellennummer:
+        {{ personalisierungDTO.dstNummer }}</mat-card-subtitle
+      >
+    </mat-card-header>
+    <mat-card-content>
+      <p>Signatur: {{ personalisierungDTO.signatur }}</p>
+    </mat-card-content>
+    <mat-card-actions align="end">
+      <button
+        type="button"
+        mat-raised-button
+        (click)="datenquelleInput.click()"
+      >
+        Datenquelle XML auswählen
+      </button>
+      <input
+        #datenquelleInput
+        hidden
+        type="file"
+        id="datenquelleFile"
+        (change)="onDatenquelleSelected($event)"
+      />
+    </mat-card-actions>
+  </mat-card>
+  <br />
+
+  <h2 class="mat-h2">
+    {{ aufhebungsbescheideTitle() }}
+  </h2>
+
+  <mat-card
+    *ngFor="let aufhebungsbescheidDTO of aufhebungsbescheidDTOList"
+    class="dashboard-card"
+  >
+    <mat-card-header>
+      <div mat-card-avatar class="contact-avatar">
+        <mat-icon aria-hidden="false" fontIcon="perm_identity"></mat-icon>
+      </div>
+      <mat-card-title>
+        {{ aufhebungsbescheidDTO.empfaengerDTO.personKundennummer }}
+      </mat-card-title>
+      <mat-card-subtitle>
+        {{ aufhebungsbescheidDTO.empfaengerDTO.personAnrede }}
+        {{ aufhebungsbescheidDTO.empfaengerDTO.personVorname }}
+        {{ aufhebungsbescheidDTO.empfaengerDTO.personZusatzwort }}
+        {{ aufhebungsbescheidDTO.empfaengerDTO.personNachname }} ({{
+          aufhebungsbescheidDTO.empfaengerDTO.personGeschlecht
+        }})
+      </mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <p>
+        Anschrift:
+        {{ aufhebungsbescheidDTO.empfaengerDTO.personPostadresseStrasse }},
+        {{ aufhebungsbescheidDTO.empfaengerDTO.personPostadressePLZ }}
+        {{ aufhebungsbescheidDTO.empfaengerDTO.personPostadresseOrt }} ({{
+          aufhebungsbescheidDTO.empfaengerDTO.personAdresszusatz
+        }}, {{ aufhebungsbescheidDTO.empfaengerDTO.personLand }})
+      </p>
+      <form (ngSubmit)="onSubmitForAufhebungsbescheid(aufhebungsbescheidDTO)">
+        Form goes here
+      </form>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card
+    *ngFor="let empfaengerDTO of empfaengerDTOList"
+    class="dashboard-card"
+  >
+    <mat-card-header>
+      <div mat-card-avatar class="contact-avatar">
+        <mat-icon aria-hidden="false" fontIcon="perm_identity"></mat-icon>
+      </div>
+      <mat-card-title>
+        {{ empfaengerDTO?.personKundennummer }}
+      </mat-card-title>
+      <mat-card-subtitle>
+        {{ empfaengerDTO?.personAnrede }} {{ empfaengerDTO?.personVorname }}
+        {{ empfaengerDTO?.personZusatzwort }}
+        {{ empfaengerDTO?.personNachname }} ({{
+          empfaengerDTO?.personGeschlecht
+        }})
+      </mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <form
+        [formGroup]="
+          getFormGroupByKundennummer(empfaengerDTO.personKundennummer!)
+        "
+        (ngSubmit)="onSubmitForKundennummer(empfaengerDTO.personKundennummer!)"
+      >
+        <p>
+          Anschrift: {{ empfaengerDTO?.personPostadresseStrasse }},
+          {{ empfaengerDTO?.personPostadressePLZ }}
+          {{ empfaengerDTO?.personPostadresseOrt }} ({{
+            empfaengerDTO?.personAdresszusatz
+          }}, {{ empfaengerDTO?.personLand }})
+        </p>
+        <p>
+          <mat-form-field appearance="outline">
+            <mat-label>Beginn Erstattungszeitraum</mat-label>
+            <input
+              required
+              matInput
+              formControlName="beginnErstattungszeitraum"
+              [matDatepicker]="beginnPicker"
+              placeHolder="01.01.2021"
+            />
+            <mat-hint>Format: TT.MM.JJJJ</mat-hint>
+            <mat-datepicker-toggle
+              matIconSuffix
+              [for]="beginnPicker"
+            ></mat-datepicker-toggle>
+            <mat-datepicker #beginnPicker></mat-datepicker>
+          </mat-form-field>
+        </p>
+        <p>
+          <mat-form-field appearance="outline">
+            <mat-label>Ende Erstattungszeitraum</mat-label>
+            <input
+              required
+              matInput
+              formControlName="endeErstattstungszeitraum"
+              [matDatepicker]="endePicker"
+              placeHolder="31.01.2021"
+            />
+            <mat-hint>Format: TT.MM.JJJJ</mat-hint>
+            <mat-datepicker-toggle
+              matIconSuffix
+              [for]="endePicker"
+            ></mat-datepicker-toggle>
+            <mat-datepicker #endePicker></mat-datepicker>
+          </mat-form-field>
+        </p>
+        <p>
+          <mat-form-field appearance="outline">
+            <mat-label>Leistungsart</mat-label>
+            <input
+              required
+              matInput
+              formControlName="leistungsart"
+              placeholder="Arbeitslosengeld 1"
+            />
+            <mat-icon matSuffix>gavel</mat-icon>
+            <mat-hint>Freitext</mat-hint>
+          </mat-form-field>
+        </p>
+        <p>
+          <mat-form-field appearance="outline">
+            <mat-label>Begründung Aufhebung</mat-label>
+            <textarea
+              required
+              matInput
+              cdkTextareaAutosize
+              #autosize="cdkTextareaAutosize"
+              cdkAutosizeMinRows="5"
+              cdkAutosizeMaxRows="10"
+              formControlName="begründungAufhebung"
+              placeholder="Wegfall der Verfügbarkeit"
+            ></textarea>
+            <mat-icon matSuffix>gavel</mat-icon>
+            <mat-hint>Freitext</mat-hint>
+          </mat-form-field>
+        </p>
+        <p>
+          <mat-form-field appearance="outline">
+            <mat-label>Vertragsgegenstandsnummer</mat-label>
+            <input
+              required
+              matInput
+              formControlName="vertragsgegenstandsnummer"
+              placeholder="9001K123456789"
+            />
+            <mat-icon matSuffix>insert_drive_file</mat-icon>
+            <mat-hint>Freitext</mat-hint>
+          </mat-form-field>
+        </p>
+        <p>
+          <mat-form-field appearance="outline">
+            <mat-label>Leistungssatz</mat-label>
+            <input
+              required
+              matInput
+              type="number"
+              formControlName="leistungssatz"
+              placeholder="1500"
+            />
+            <mat-icon matSuffix>euro_symbol</mat-icon>
+            <mat-hint>Geldbetrag</mat-hint>
+          </mat-form-field>
+        </p>
+      </form>
+    </mat-card-content>
+    <mat-card-actions align="end">
+      <button
+        type="submit"
+        [disabled]="
+          !this.getFormGroupByKundennummer(empfaengerDTO.personKundennummer!)
+            .valid
+        "
+        mat-raised-button
+        (click)="onDownloadPDFSelected($event)"
+      >
+        Bescheid herunterladen (pdf)
+      </button>
+      <button
+        type="submit"
+        [disabled]="
+          !this.getFormGroupByKundennummer(empfaengerDTO.personKundennummer!)
+            .valid
+        "
+        mat-raised-button
+        (click)="onDownloadPDFSelected($event)"
+      >
+        Bescheid anzeigen (pdf)
+      </button>
+    </mat-card-actions>
+    <mat-card-footer>
+      <mat-accordion>
+        <mat-expansion-panel
+          [disabled]="
+            !this.getFormGroupByKundennummer(empfaengerDTO.personKundennummer!)
+              .valid
+          "
+          (opened)="panelOpenState = true"
+          (closed)="panelOpenState = false"
+        >
+          <mat-expansion-panel-header>
+            <mat-panel-title> Zusammenfassung </mat-panel-title>
+            <mat-panel-description>
+              Vorschau des Bescheidtextes
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+          <p>
+            In der Zeit vom
+            {{
+              this.getFormGroupByKundennummer(
+                empfaengerDTO.personKundennummer!
+              ).get("beginnErstattungszeitraum")?.value | date
+            }}
+            bis zum
+            {{
+              this.getFormGroupByKundennummer(
+                empfaengerDTO.personKundennummer!
+              ).get("endeErstattstungszeitraum")?.value | date
+            }}
+            haben Sie
+            {{
+              this.getFormGroupByKundennummer(
+                empfaengerDTO.personKundennummer!
+              ).get("leistungsart")?.value
+            }}
+            erhalten, obwohl die Voraussetzungen für den Bezug von
+            {{
+              this.getFormGroupByKundennummer(
+                empfaengerDTO.personKundennummer!
+              ).get("leistungsart")?.value
+            }}
+            nicht vorgelegen haben.
+          </p>
+          <br />
+          <p>
+            {{
+              this.getFormGroupByKundennummer(
+                empfaengerDTO.personKundennummer!
+              ).get("begründungAufhebung")?.value
+            }}
+          </p>
+          <br />
+          <p>
+            In der Zeit vom
+            {{
+              this.getFormGroupByKundennummer(
+                empfaengerDTO.personKundennummer!
+              ).get("beginnErstattungszeitraum")?.value | date
+            }}
+            bis zum
+            {{
+              this.getFormGroupByKundennummer(
+                empfaengerDTO.personKundennummer!
+              ).get("endeErstattstungszeitraum")?.value | date
+            }}
+            haben Sie damit insgesamt
+            {{ this.getSumByKundennummer(empfaengerDTO.personKundennummer!) }}
+            EUR zu Unrecht erhalten. Dieser Betrag ist von Ihnen bis zum
+            [Eingabe: Zahlungsfrist] zu erstatten.
+          </p>
+          <p>
+            Zahlungen richten Sie bitte an:<br />
+
+            [Textbaustein: Bankverbindung]<br />
+
+            Verwendungszweck:
+            {{
+              this.getFormGroupByKundennummer(
+                empfaengerDTO.personKundennummer!
+              ).get("vertragsgegenstandsnummer")?.value
+            }}<br />
+          </p>
+          <br />
+          <p>[Textbaustein: Rechtsbehelfsbelehrung SGB III]</p>
+          <br />
+          <p>[Textbaustein: Signatur]</p>
+        </mat-expansion-panel>
+      </mat-accordion>
+    </mat-card-footer>
+  </mat-card>
+</div>

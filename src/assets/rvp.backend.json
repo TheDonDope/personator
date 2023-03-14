@@ -1,0 +1,202 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "APIController",
+    "version": "1.0"
+  },
+  "paths": {
+    "/Aufhebungsbescheid": {
+      "post": {
+        "tags": [
+          "Aufhebungsbescheid"
+        ],
+        "operationId": "HoleDokumente",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AufhebungsbescheidDTO"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AufhebungsbescheidDTO"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/AufhebungsbescheidDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErgebnisDTO"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErgebnisDTO"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErgebnisDTO"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Aufhebungsbescheid"
+        ],
+        "operationId": "DokumentDownload",
+        "parameters": [
+          {
+            "name": "docGUID",
+            "in": "query",
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AufhebungsbescheidDTO": {
+        "type": "object",
+        "properties": {
+          "empfaenger": {
+            "$ref": "#/components/schemas/EmpfaengerDTO"
+          },
+          "fachdaten": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FachdatenDTO"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "EmpfaengerDTO": {
+        "type": "object",
+        "properties": {
+          "personKundennummer": {
+            "type": "string",
+            "nullable": true
+          },
+          "personAnrede": {
+            "type": "string",
+            "nullable": true
+          },
+          "personVorname": {
+            "type": "string",
+            "nullable": true
+          },
+          "personNachname": {
+            "type": "string",
+            "nullable": true
+          },
+          "personZusatzwort": {
+            "type": "string",
+            "nullable": true
+          },
+          "personGeschlecht": {
+            "type": "string",
+            "nullable": true
+          },
+          "personAdresszusatz": {
+            "type": "string",
+            "nullable": true
+          },
+          "personPostadresseStrasse": {
+            "type": "string",
+            "nullable": true
+          },
+          "personPostadresseOrt": {
+            "type": "string",
+            "nullable": true
+          },
+          "personPostadressePLZ": {
+            "type": "string",
+            "nullable": true
+          },
+          "personLand": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Ergebnis": {
+        "type": "object",
+        "properties": {
+          "docGUID": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ErgebnisDTO": {
+        "type": "object",
+        "properties": {
+          "ergebnisse": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Ergebnis"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "FachdatenDTO": {
+        "type": "object",
+        "properties": {
+          "beginnErstattungszeitraum": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "endeErstattstungszeitraum": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "leistungsart": {
+            "type": "string",
+            "nullable": true
+          },
+          "begründungAufhebung": {
+            "type": "string",
+            "nullable": true
+          },
+          "vertragsgegenstandsnummer": {
+            "type": "string",
+            "nullable": true
+          },
+          "leistungssatz": {
+            "type": "number",
+            "format": "double"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  }
+}
