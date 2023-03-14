@@ -33,24 +33,23 @@
           {{ aufhebungsbescheideDTO.personalisierungAnwender.signatur }}
         </p>
       </mat-card-content>
-      <mat-card-actions align="end">
-        <button
-          type="button"
-          mat-raised-button
-          (click)="datenquelleInput.click()"
-        >
-          Datenquelle XML auswählen
-        </button>
-        <input
-          #datenquelleInput
-          hidden
-          type="file"
-          id="datenquelleFile"
-          (change)="onDatenquelleSelected($event)"
-        />
-      </mat-card-actions>
     </mat-card>
     <br />
+    <button
+      type="button"
+      mat-fab
+      color="warn"
+      (click)="datenquelleInput.click()"
+    >
+      <mat-icon>attach_file</mat-icon>
+    </button>
+    <input
+      #datenquelleInput
+      hidden
+      type="file"
+      id="datenquelleFile"
+      (change)="onDatenquelleSelected($event)"
+    />
 
     <h2 class="mat-h2">
       {{ aufhebungsbescheideTitle() }}
