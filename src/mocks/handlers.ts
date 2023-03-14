@@ -20,6 +20,12 @@ const next = () => {
   return i++;
 };
 
+const leistungsarten: string[] = [
+  'Arbeitslosengeld 1',
+  'Arbeitslosengeld 2',
+  'Kindergeld',
+];
+
 export const handlers = [
   rest.post(`${baseURL}/HoleDokumente`, (_, res, ctx) => {
     const resultArray = [
@@ -33,8 +39,14 @@ export const handlers = [
           ].map((_) => ({
             personName: faker.name.fullName(),
             zeitraum: faker.date.soon().toLocaleDateString('de-DE'),
-            leistungsart: faker.commerce.product(),
-            docGUID: faker.lorem.slug(1),
+            leistungsart:
+              leistungsarten[
+                faker.datatype.number({
+                  min: 0,
+                  max: leistungsarten.length - 1,
+                })
+              ],
+            docGUID: faker.datatype.uuid(),
           })),
         }),
       ],

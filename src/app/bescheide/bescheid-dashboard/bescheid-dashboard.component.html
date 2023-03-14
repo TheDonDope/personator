@@ -271,10 +271,13 @@
           </mat-card-subtitle>
         </mat-card-header>
         <mat-card-content>
-          <button mat-raised-button (click)="onPDFDownloaded(ergebnis.docGUID)">
-            Dokument {{ ergebnis.docGUID }} herunterladen
-          </button>
+          <p>Dokumentname: {{ ergebnis.docGUID }}</p>
         </mat-card-content>
+        <mat-card-actions align="end">
+          <button mat-raised-button (click)="onPDFDownloaded(ergebnis.docGUID)">
+            PDF herunterladen
+          </button>
+        </mat-card-actions>
       </mat-card>
     </div>
   </form>
