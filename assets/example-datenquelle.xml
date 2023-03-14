@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Empfaengerliste>
+	<Empfaenger>
+		<PersonKundennummer>123A123456789</PersonKundennummer>
+		<PersonAnrede>Frau</PersonAnrede>
+		<PersonVorname>Josefine</PersonVorname>
+		<PersonNachname>Malerino</PersonNachname>
+		<PersonZusatzwort>von</PersonZusatzwort>
+		<PersonGeschlecht>weiblich</PersonGeschlecht>
+		<PersonAdresszusatz>4. OG</PersonAdresszusatz>
+		<PersonPostadresseStrasse>Waldweg 42</PersonPostadresseStrasse>
+		<PersonPostAdresseOrt>Nürnberg</PersonPostAdresseOrt>
+		<PersonPostAdressePLZ>90473</PersonPostAdressePLZ>
+		<PersonLand>Deutschland</PersonLand>
+		<FachdatenListe>
+			<Fachdaten>
+
+			</Fachdaten>
+			<Fachdaten></Fachdaten>
+		</FachdatenListe>
+	</Empfaenger>
+	<Empfaenger>
+
+	</Empfaenger>
+</Empfaengerliste>
