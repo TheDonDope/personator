@@ -12,7 +12,11 @@ import {
 } from '../../core/aufhebungsbescheide-dto';
 import { AufhebungsbescheideService } from '../../core/aufhebungsbescheide.service';
 import { EmpfaengerDTO } from '../../core/empfaenger-dto';
-import { ErgebnisDTO } from '../../core/ergebnis-dto';
+import {
+  ErgebnisDTO,
+  hasErgebnisse,
+  newErgebnisDTO,
+} from '../../core/ergebnis-dto';
 import { newFachdatenDTO } from '../../core/fachdaten-dto';
 import { XMLtoDTOMapperService } from '../../core/xml-to-dto-mapper.service';
 
@@ -23,6 +27,7 @@ import { XMLtoDTOMapperService } from '../../core/xml-to-dto-mapper.service';
 })
 export class BescheidDashboardComponent implements OnInit {
   aufhebungsbescheideDTO: AufhebungsbescheideDTO = newAufhebungsbescheideDTO();
+  ergebnisDTO: ErgebnisDTO = newErgebnisDTO();
   aufhebungsbescheideGroup: FormRecord = new FormRecord({});
 
   constructor(
@@ -50,6 +55,12 @@ export class BescheidDashboardComponent implements OnInit {
       : `Aufhebungsbescheide`;
   }
 
+  ergebnisseTitle(): string {
+    return this.ergebnisDTO.ergebnisse.length > 0
+      ? `Erzeugte Dokumente (${this.ergebnisDTO.ergebnisse.length})`
+      : `Erzeugte Dokumente`;
+  }
+
   getFormControlNameByKundennummerAndFachdatenIndex(
     kundennummer: string,
     fachdatenIndex: number,
@@ -61,6 +72,11 @@ export class BescheidDashboardComponent implements OnInit {
       nameSuffix
     );
   }
+
+  hasErgebnisse(): boolean {
+    return hasErgebnisse(this.ergebnisDTO);
+  }
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   onDatenquelleSelected($event: any): void {
     const file: File = $event?.target?.files[0];
@@ -101,7 +117,18 @@ export class BescheidDashboardComponent implements OnInit {
       this.aufhebungsbescheideService.postHoleDokumente(aufhebungsbescheideDTO);
     postHoleDokumente$.subscribe((next: ErgebnisDTO) => {
       console.log(next);
+      this.ergebnisDTO = next;
     });
+  }
+
+  onPDFDownloaded(docGUID: string | null): void {
+    if (docGUID) {
+      const getDokumentDownload$ =
+        this.aufhebungsbescheideService.getDokumentDownload(docGUID);
+      getDokumentDownload$.subscribe((next: File) => {
+        console.log(next);
+      });
+    }
   }
 
   private mapXMLToAufhebungsbescheide(datenquelleXML: string): void {

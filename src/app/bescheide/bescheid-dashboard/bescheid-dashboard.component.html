@@ -248,5 +248,34 @@
     >
       Dokumente erzeugen
     </button>
+
+    <br />
+    <div *ngIf="hasErgebnisse()">
+      <h2 class="mat-h2">
+        {{ ergebnisseTitle() }}
+      </h2>
+
+      <mat-card
+        *ngFor="let ergebnis of ergebnisDTO?.ergebnisse"
+        class="dashboard-card"
+      >
+        <mat-card-header>
+          <div mat-card-avatar class="contact-avatar">
+            <mat-icon aria-hidden="false" fontIcon="perm_identity"></mat-icon>
+          </div>
+          <mat-card-title>
+            {{ ergebnis.personName }} ({{ ergebnis.leistungsart }})
+          </mat-card-title>
+          <mat-card-subtitle>
+            Zeiraum: {{ ergebnis.zeitraum }}
+          </mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <button mat-raised-button (click)="onPDFDownloaded(ergebnis.docGUID)">
+            Dokument {{ ergebnis.docGUID }} herunterladen
+          </button>
+        </mat-card-content>
+      </mat-card>
+    </div>
   </form>
 </div>
