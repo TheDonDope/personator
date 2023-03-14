@@ -28,13 +28,7 @@ import { XMLtoDTOMapperService } from '../../core/xml-to-dto-mapper.service';
 export class BescheidDashboardComponent implements OnInit {
   aufhebungsbescheideDTO: AufhebungsbescheideDTO = newAufhebungsbescheideDTO();
   ergebnisDTO: ErgebnisDTO = newErgebnisDTO();
-  displayedErgebnisColumns: string[] = [
-    'PersonName',
-    'Leistungsart',
-    'Zeitraum',
-    'DocGUID',
-    'DownloadPDF',
-  ];
+
   aufhebungsbescheideGroup: FormRecord = new FormRecord({});
 
   constructor(
@@ -128,17 +122,7 @@ export class BescheidDashboardComponent implements OnInit {
     });
   }
 
-  onPDFDownloaded(docGUID: string | null): void {
-    if (docGUID) {
-      const getDokumentDownload$ =
-        this.aufhebungsbescheideService.getDokumentDownload(docGUID);
-      getDokumentDownload$.subscribe((next: File) => {
-        console.log(next);
-      });
-    }
-  }
-
-  private mapXMLToAufhebungsbescheide(datenquelleXML: string): void {
+  mapXMLToAufhebungsbescheide(datenquelleXML: string): void {
     const empfaengerDTOList: EmpfaengerDTO[] =
       this.xmlToDTOMapper.mapXMLtoEmpfaengerDTOList(datenquelleXML);
     for (const empfaengerDTO of empfaengerDTOList) {
