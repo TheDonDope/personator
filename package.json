@@ -9,7 +9,7 @@
     "test": "ng test",
     "lint": "ng lint",
     "server": "ng build && http-server dist/rvp-spa",
-    "deploy": "ng deploy --repo git@github.com:TheDonDope/personator.git --base-href https://thedondope.github.io/personator"
+    "deploy": "ng deploy --repo git@github.com:TheDonDope/personator.git --base-href https://thedondope.github.io/personator/"
   },
   "private": true,
   "dependencies": {
