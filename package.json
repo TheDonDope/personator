@@ -8,7 +8,8 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "lint": "ng lint",
-    "server": "ng build && http-server dist/rvp-spa"
+    "server": "ng build && http-server dist/rvp-spa",
+    "deploy": "ng deploy --repo git@github.com:TheDonDope/personator.git --base-href https://thedondope.github.io/personator"
   },
   "private": true,
   "dependencies": {
@@ -42,6 +43,7 @@
     "@types/node": "^18.14.6",
     "@typescript-eslint/eslint-plugin": "5.48.2",
     "@typescript-eslint/parser": "5.48.2",
+    "angular-cli-ghpages": "^1.0.5",
     "eslint": "^8.33.0",
     "http-server": "^14.1.1",
     "jest": "^28.1.3",
