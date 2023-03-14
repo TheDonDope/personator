@@ -21,7 +21,7 @@ const next = () => {
 };
 
 export const handlers = [
-  rest.post(`${baseURL}/Aufhebungsbescheid`, (_, res, ctx) => {
+  rest.post(`${baseURL}/HoleDokumente`, (_, res, ctx) => {
     const resultArray = [
       [
         ctx.status(200),
@@ -31,6 +31,9 @@ export const handlers = [
               faker.datatype.number({ max: MAX_ARRAY_LENGTH })
             ).keys(),
           ].map((_) => ({
+            personName: faker.name.fullName(),
+            zeitraum: faker.date.soon().toLocaleDateString('de-DE'),
+            leistungsart: faker.commerce.product(),
             docGUID: faker.lorem.slug(1),
           })),
         }),
@@ -39,7 +42,7 @@ export const handlers = [
 
     return res(...resultArray[next() % resultArray.length]);
   }),
-  rest.get(`${baseURL}/Aufhebungsbescheid`, (_, res, ctx) => {
+  rest.get(`${baseURL}/DokumentDownload`, (_, res, ctx) => {
     const resultArray = [[ctx.status(200), ctx.json(null)]];
 
     return res(...resultArray[next() % resultArray.length]);

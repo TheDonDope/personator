@@ -10,7 +10,9 @@ import {
   AufhebungsbescheideDTO,
   newAufhebungsbescheideDTO,
 } from '../../core/aufhebungsbescheide-dto';
+import { AufhebungsbescheideService } from '../../core/aufhebungsbescheide.service';
 import { EmpfaengerDTO } from '../../core/empfaenger-dto';
+import { ErgebnisDTO } from '../../core/ergebnis-dto';
 import { newFachdatenDTO } from '../../core/fachdaten-dto';
 import { XMLtoDTOMapperService } from '../../core/xml-to-dto-mapper.service';
 
@@ -25,6 +27,7 @@ export class BescheidDashboardComponent implements OnInit {
 
   constructor(
     private xmlToDTOMapper: XMLtoDTOMapperService,
+    private aufhebungsbescheideService: AufhebungsbescheideService,
     private httpClient: HttpClient
   ) {}
 
@@ -94,6 +97,11 @@ export class BescheidDashboardComponent implements OnInit {
     aufhebungsbescheideDTO: AufhebungsbescheideDTO
   ): void {
     console.log(aufhebungsbescheideDTO);
+    const postHoleDokumente$ =
+      this.aufhebungsbescheideService.postHoleDokumente(aufhebungsbescheideDTO);
+    postHoleDokumente$.subscribe((next: ErgebnisDTO) => {
+      console.log(next);
+    });
   }
 
   private mapXMLToAufhebungsbescheide(datenquelleXML: string): void {
