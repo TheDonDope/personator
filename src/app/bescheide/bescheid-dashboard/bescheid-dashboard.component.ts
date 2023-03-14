@@ -28,6 +28,13 @@ import { XMLtoDTOMapperService } from '../../core/xml-to-dto-mapper.service';
 export class BescheidDashboardComponent implements OnInit {
   aufhebungsbescheideDTO: AufhebungsbescheideDTO = newAufhebungsbescheideDTO();
   ergebnisDTO: ErgebnisDTO = newErgebnisDTO();
+  displayedErgebnisColumns: string[] = [
+    'PersonName',
+    'Leistungsart',
+    'Zeitraum',
+    'DocGUID',
+    'DownloadPDF',
+  ];
   aufhebungsbescheideGroup: FormRecord = new FormRecord({});
 
   constructor(

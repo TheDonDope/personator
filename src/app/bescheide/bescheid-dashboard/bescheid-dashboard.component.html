@@ -255,30 +255,41 @@
         {{ ergebnisseTitle() }}
       </h2>
 
-      <mat-card
-        *ngFor="let ergebnis of ergebnisDTO?.ergebnisse"
-        class="dashboard-card"
-      >
-        <mat-card-header>
-          <div mat-card-avatar class="contact-avatar">
-            <mat-icon aria-hidden="false" fontIcon="perm_identity"></mat-icon>
-          </div>
-          <mat-card-title>
-            {{ ergebnis.personName }} ({{ ergebnis.leistungsart }})
-          </mat-card-title>
-          <mat-card-subtitle>
-            Zeiraum: {{ ergebnis.zeitraum }}
-          </mat-card-subtitle>
-        </mat-card-header>
-        <mat-card-content>
-          <p>Dokumentname: {{ ergebnis.docGUID }}</p>
-        </mat-card-content>
-        <mat-card-actions align="end">
-          <button mat-raised-button (click)="onPDFDownloaded(ergebnis.docGUID)">
-            PDF herunterladen
-          </button>
-        </mat-card-actions>
-      </mat-card>
+      <table mat-table [dataSource]="ergebnisDTO.ergebnisse">
+        <ng-container matColumnDef="PersonName">
+          <th mat-header-cell *matHeaderCellDef>Name</th>
+          <td mat-cell *matCellDef="let element">{{ element.personName }}</td>
+        </ng-container>
+        <ng-container matColumnDef="Leistungsart">
+          <th mat-header-cell *matHeaderCellDef>Leistungsart</th>
+          <td mat-cell *matCellDef="let element">{{ element.leistungsart }}</td>
+        </ng-container>
+        <ng-container matColumnDef="Zeitraum">
+          <th mat-header-cell *matHeaderCellDef>Zeitraum</th>
+          <td mat-cell *matCellDef="let element">{{ element.zeitraum }}</td>
+        </ng-container>
+        <ng-container matColumnDef="DocGUID">
+          <th mat-header-cell *matHeaderCellDef>Dokumentname</th>
+          <td mat-cell *matCellDef="let element">{{ element.docGUID }}</td>
+        </ng-container>
+        <ng-container matColumnDef="DownloadPDF">
+          <th mat-header-cell *matHeaderCellDef>Aktionen</th>
+          <td mat-cell *matCellDef="let element">
+            <button
+              mat-raised-button
+              (click)="onPDFDownloaded(element.docGUID)"
+            >
+              PDF herunterladen
+            </button>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedErgebnisColumns"></tr>
+        <tr
+          mat-row
+          *matRowDef="let row; columns: displayedErgebnisColumns"
+        ></tr>
+      </table>
     </div>
   </form>
 </div>
