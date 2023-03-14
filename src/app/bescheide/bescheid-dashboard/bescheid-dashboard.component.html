@@ -5,43 +5,20 @@
     (ngSubmit)="onSubmitForAufhebungsbescheide(aufhebungsbescheideDTO)"
     [formGroup]="aufhebungsbescheideGroup"
   >
-    <mat-card class="dashboard-card">
-      <mat-card-header>
-        <div mat-card-avatar class="contact-avatar">
-          <mat-icon aria-hidden="false" fontIcon="contact_mail"></mat-icon>
-        </div>
-        <mat-card-title
-          >Absender
-          {{ aufhebungsbescheideDTO.personalisierungAnwender.absenderVorname }}
-          {{
-            aufhebungsbescheideDTO.personalisierungAnwender.absenderZusatzwort
-          }}
-          {{
-            aufhebungsbescheideDTO.personalisierungAnwender.absenderNachname
-          }}</mat-card-title
-        >
-        <mat-card-subtitle
-          >Dienststellennummer:
-          {{
-            aufhebungsbescheideDTO.personalisierungAnwender.dstNummer
-          }}</mat-card-subtitle
-        >
-      </mat-card-header>
-      <mat-card-content>
-        <p>
-          Signatur:
-          {{ aufhebungsbescheideDTO.personalisierungAnwender.signatur }}
-        </p>
-      </mat-card-content>
-    </mat-card>
+    <rvp-personalisierung
+      [personalisierungDTO]="aufhebungsbescheideDTO.personalisierungAnwender"
+    ></rvp-personalisierung>
+
     <br />
     <button
       type="button"
       mat-fab
+      extended
       color="warn"
       (click)="datenquelleInput.click()"
     >
       <mat-icon>attach_file</mat-icon>
+      Datenquelle XML einlesen
     </button>
     <input
       #datenquelleInput
@@ -228,23 +205,31 @@
       </mat-card-content>
       <mat-card-actions align="end">
         <button
-          mat-raised-button
+          mat-fab
+          extended
+          color="warn"
+          type="button"
           (click)="onFachdatensatzAdded(aufhebungsbescheidDTO)"
         >
+          <mat-icon>create_new_folder</mat-icon>
           Weiteren Fachdatensatz hinzufügen
         </button>
       </mat-card-actions>
     </mat-card>
 
     <br />
+
     <button
-      mat-raised-button
+      mat-fab
+      extended
+      color="warn"
       type="submit"
       (click)="onSubmitForAufhebungsbescheide(aufhebungsbescheideDTO)"
       [disabled]="
         aufhebungsbescheideGroup.untouched && !aufhebungsbescheideGroup.valid
       "
     >
+      <mat-icon>cloud_circle</mat-icon>
       Dokumente erzeugen
     </button>
 

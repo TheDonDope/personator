@@ -1,0 +1,23 @@
+<mat-card class="dashboard-card">
+  <mat-card-header>
+    <div mat-card-avatar class="contact-avatar">
+      <mat-icon aria-hidden="false" fontIcon="contact_mail"></mat-icon>
+    </div>
+    <mat-card-title
+      >Absender
+      {{ personalisierungDTO.absenderVorname }}
+      {{ personalisierungDTO.absenderZusatzwort }}
+      {{ personalisierungDTO.absenderNachname }}</mat-card-title
+    >
+    <mat-card-subtitle
+      >Dienststellennummer:
+      {{ personalisierungDTO.dstNummer }}</mat-card-subtitle
+    >
+  </mat-card-header>
+  <mat-card-content>
+    <p>
+      Signatur:
+      {{ personalisierungDTO.signatur }}
+    </p>
+  </mat-card-content>
+</mat-card>

@@ -128,16 +128,6 @@ export class BescheidDashboardComponent implements OnInit {
     });
   }
 
-  onPDFDownloaded(docGUID: string | null): void {
-    if (docGUID) {
-      const getDokumentDownload$ =
-        this.aufhebungsbescheideService.getDokumentDownload(docGUID);
-      getDokumentDownload$.subscribe((next: File) => {
-        console.log(next);
-      });
-    }
-  }
-
   private mapXMLToAufhebungsbescheide(datenquelleXML: string): void {
     const empfaengerDTOList: EmpfaengerDTO[] =
       this.xmlToDTOMapper.mapXMLtoEmpfaengerDTOList(datenquelleXML);
