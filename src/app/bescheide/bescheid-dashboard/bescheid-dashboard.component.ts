@@ -1,13 +1,17 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormControl, FormRecord, Validators } from '@angular/forms';
 
 import {
   AufhebungsbescheidDTO,
   newAufhebungsbescheidDTO,
 } from '../../core/aufhebungsbescheid-dto';
+import {
+  AufhebungsbescheideDTO,
+  newAufhebungsbescheideDTO,
+} from '../../core/aufhebungsbescheide-dto';
 import { EmpfaengerDTO } from '../../core/empfaenger-dto';
-import { PersonalisierungDTO } from '../../core/personalisierung-dto';
+import { newFachdatenDTO } from '../../core/fachdaten-dto';
 import { XMLtoDTOMapperService } from '../../core/xml-to-dto-mapper.service';
 
 @Component({
@@ -16,11 +20,8 @@ import { XMLtoDTOMapperService } from '../../core/xml-to-dto-mapper.service';
   styleUrls: ['./bescheid-dashboard.component.scss'],
 })
 export class BescheidDashboardComponent implements OnInit {
-  aufhebungsbescheidDTOList: AufhebungsbescheidDTO[] = [];
-  empfaengerDTOList: EmpfaengerDTO[] = [];
-  personalisierungDTOList: PersonalisierungDTO[] = [];
-  empfaengerForms: Map<string, FormGroup> = new Map();
-  panelOpenState = false;
+  aufhebungsbescheideDTO: AufhebungsbescheideDTO = newAufhebungsbescheideDTO();
+  aufhebungsbescheideGroup: FormRecord = new FormRecord({});
 
   constructor(
     private xmlToDTOMapper: XMLtoDTOMapperService,
@@ -33,105 +34,136 @@ export class BescheidDashboardComponent implements OnInit {
         responseType: 'text',
       })
       .subscribe((personalisierungenXML: string) => {
-        this.personalisierungDTOList =
+        this.aufhebungsbescheideDTO.personalisierungAnwender =
           this.xmlToDTOMapper.mapXMLtoPersonalisierungDTOList(
             personalisierungenXML
-          );
+          )[0];
       });
-    this.panelOpenState = true;
   }
 
   aufhebungsbescheideTitle(): string {
-    return this.aufhebungsbescheidDTOList.length > 0
-      ? `Aufhebungsbescheide (${this.aufhebungsbescheidDTOList.length})`
+    return this.aufhebungsbescheideDTO.aufhebungsbescheide.length > 0
+      ? `Aufhebungsbescheide (${this.aufhebungsbescheideDTO.aufhebungsbescheide.length})`
       : `Aufhebungsbescheide`;
   }
 
-  getFormGroupByKundennummer(kundennummer: string): FormGroup {
-    return this.empfaengerForms.get(kundennummer)!;
+  getFormControlNameByKundennummerAndFachdatenIndex(
+    kundennummer: string,
+    fachdatenIndex: number,
+    nameSuffix: string
+  ): string {
+    return controlNameByKundennummerAndFachdatenIndex(
+      kundennummer,
+      fachdatenIndex,
+      nameSuffix
+    );
   }
-
-  getSumByKundennummer(kundennummer: string): number {
-    let anzahlTage = 0;
-    let result = 0;
-    const von = this.getFormGroupByKundennummer(kundennummer).get(
-      'beginnErstattungszeitraum'
-    )?.value;
-    const bis = this.getFormGroupByKundennummer(kundennummer).get(
-      'endeErstattungszeitraum'
-    )?.value;
-    const leistungssatz = this.getFormGroupByKundennummer(kundennummer).get(
-      'leistungssatz'
-    )?.value as number;
-
-    const oneDay = 24 * 60 * 60 * 1000; // hours * minutes * seconds * milliseconds
-    if (von && bis && leistungssatz) {
-      anzahlTage = Math.round(Math.abs((bis - von) / oneDay));
-
-      result = anzahlTage * leistungssatz;
-    }
-    return result;
-  }
-
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  onDatenquelleSelected($event: any) {
+  onDatenquelleSelected($event: any): void {
     const file: File = $event?.target?.files[0];
     const reader: FileReader = new FileReader();
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     reader.onloadend = (e) => {
       const datenquelleXML: string = reader.result as string;
-      this.empfaengerDTOList =
-        this.xmlToDTOMapper.mapXMLtoEmpfaengerDTOList(datenquelleXML);
-      this.mapToAufhebungsbescheide();
-      this.buildForms();
+      this.mapXMLToAufhebungsbescheide(datenquelleXML);
     };
     reader.readAsText(file);
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  onDownloadPDFSelected($event: any): void {
-    console.log($event);
+  onFachdatensatzAdded(aufhebungsbescheidDTO: AufhebungsbescheidDTO): void {
+    const controlsToAdd: ControlToAdd[] = requiredControlsToAdd(
+      aufhebungsbescheidDTO.empfaengerDTO.personKundennummer!,
+      aufhebungsbescheidDTO.fachdatenDTOList.length,
+      'beginnErstattungszeitraum',
+      'endeErstattstungszeitraum',
+      'leistungsart',
+      'begründungAufhebung',
+      'vertragsgegenstandsnummer',
+      'leistungssatz'
+    );
+    controlsToAdd.forEach((controlToAdd: ControlToAdd) => {
+      this.aufhebungsbescheideGroup.addControl(
+        controlToAdd.name,
+        controlToAdd.control
+      );
+    });
+    aufhebungsbescheidDTO.fachdatenDTOList.push(newFachdatenDTO());
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  onShowPDFSelected($event: any): void {
-    console.log($event);
-  }
-
-  onSubmitForAufhebungsbescheid(
-    aufhebungsbescheidDTO: AufhebungsbescheidDTO
+  onSubmitForAufhebungsbescheide(
+    aufhebungsbescheideDTO: AufhebungsbescheideDTO
   ): void {
-    console.log(aufhebungsbescheidDTO);
+    console.log(aufhebungsbescheideDTO);
   }
 
-  onSubmitForKundennummer(kundennummer: string) {
-    console.log(this.getFormGroupByKundennummer(kundennummer).value);
-  }
-
-  private mapToAufhebungsbescheide(): void {
-    for (const empfaengerDTO of this.empfaengerDTOList) {
+  private mapXMLToAufhebungsbescheide(datenquelleXML: string): void {
+    const empfaengerDTOList: EmpfaengerDTO[] =
+      this.xmlToDTOMapper.mapXMLtoEmpfaengerDTOList(datenquelleXML);
+    for (const empfaengerDTO of empfaengerDTOList) {
       const aufhebungsbescheid: AufhebungsbescheidDTO =
         newAufhebungsbescheidDTO();
       aufhebungsbescheid.empfaengerDTO = empfaengerDTO;
-      this.aufhebungsbescheidDTOList.push(aufhebungsbescheid);
-    }
-  }
-
-  private buildForms(): void {
-    for (const empfaengerDTO of this.empfaengerDTOList) {
-      const fields = {
-        beginnErstattungszeitraum: new FormControl('', Validators.required),
-        endeErstattstungszeitraum: new FormControl('', Validators.required),
-        leistungsart: new FormControl('', Validators.required),
-        begründungAufhebung: new FormControl('', Validators.required),
-        vertragsgegenstandsnummer: new FormControl('', Validators.required),
-        leistungssatz: new FormControl('', Validators.required),
-      };
-
-      const group: FormGroup = new FormGroup(fields);
-      if (empfaengerDTO?.personKundennummer) {
-        this.empfaengerForms.set(empfaengerDTO.personKundennummer, group);
+      for (let i = 0; i < aufhebungsbescheid.fachdatenDTOList.length; i++) {
+        const controlsToAdd: ControlToAdd[] = requiredControlsToAdd(
+          aufhebungsbescheid.empfaengerDTO.personKundennummer!,
+          i,
+          'beginnErstattungszeitraum',
+          'endeErstattstungszeitraum',
+          'leistungsart',
+          'begründungAufhebung',
+          'vertragsgegenstandsnummer',
+          'leistungssatz'
+        );
+        controlsToAdd.forEach((controlToAdd: ControlToAdd) => {
+          this.aufhebungsbescheideGroup.addControl(
+            controlToAdd.name,
+            controlToAdd.control
+          );
+        });
       }
+      this.aufhebungsbescheideDTO.aufhebungsbescheide.push(aufhebungsbescheid);
     }
   }
+}
+
+export interface ControlToAdd {
+  name: string;
+  control: FormControl;
+}
+
+export function controlNameByKundennummerAndFachdatenIndex(
+  kundennummer: string,
+  fachdatenIndex: number,
+  nameSuffix: string
+): string {
+  return `${kundennummer}-fachdatensatz-${fachdatenIndex}-${nameSuffix}`;
+}
+
+export function newRequiredControl(
+  kundennummer: string,
+  fachdatenIndex: number,
+  nameSuffix: string
+): ControlToAdd {
+  return {
+    name: controlNameByKundennummerAndFachdatenIndex(
+      kundennummer,
+      fachdatenIndex,
+      nameSuffix
+    ),
+    control: new FormControl('', Validators.required),
+  };
+}
+
+export function requiredControlsToAdd(
+  kundennummer: string,
+  fachdatenIndex: number,
+  ...nameSuffixes: string[]
+): ControlToAdd[] {
+  const controlsToAdd: ControlToAdd[] = [];
+  for (const nameSuffix of nameSuffixes) {
+    controlsToAdd.push(
+      newRequiredControl(kundennummer, fachdatenIndex, nameSuffix)
+    );
+  }
+  return controlsToAdd;
 }
