@@ -120,12 +120,16 @@ export class BescheidDashboardComponent implements OnInit {
     aufhebungsbescheideDTO: AufhebungsbescheideDTO
   ): void {
     console.log(aufhebungsbescheideDTO);
-    const postHoleDokumente$ =
-      this.aufhebungsbescheideService.postHoleDokumente(aufhebungsbescheideDTO);
-    postHoleDokumente$.subscribe((next: ErgebnisDTO) => {
-      console.log(next);
-      this.ergebnisDTO = next;
-    });
+    if (this.aufhebungsbescheideGroup.valid) {
+      const postHoleDokumente$ =
+        this.aufhebungsbescheideService.postHoleDokumente(
+          aufhebungsbescheideDTO
+        );
+      postHoleDokumente$.subscribe((next: ErgebnisDTO) => {
+        console.log(next);
+        this.ergebnisDTO = next;
+      });
+    }
   }
 
   private mapXMLToAufhebungsbescheide(datenquelleXML: string): void {

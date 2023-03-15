@@ -225,9 +225,7 @@
       color="warn"
       type="submit"
       (click)="onSubmitForAufhebungsbescheide(aufhebungsbescheideDTO)"
-      [disabled]="
-        aufhebungsbescheideGroup.untouched && !aufhebungsbescheideGroup.valid
-      "
+      [disabled]="aufhebungsbescheideGroup.pristine"
     >
       <mat-icon>cloud_circle</mat-icon>
       Dokumente erzeugen
